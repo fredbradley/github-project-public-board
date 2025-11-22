@@ -20,4 +20,8 @@ Create yourself a default user account:
 ```sh
 php artisan make:default-user
 ```
+
+Default user is: admin@admin.com 
+Password: admin
+
 Then login and see the magic... 

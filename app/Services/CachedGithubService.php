@@ -85,10 +85,22 @@ class CachedGithubService
         return BoardItemData::collect($response);
     }
 
+    public function getCustomFields(int $boardId): Collection
+    {
+        return Cache::remember(__FUNCTION__.$boardId, $this->ttl, function () use ($boardId) {
+            return Http::github()
+                ->get(self::apiBase()."{$boardId}/fields")
+                ->throw()
+                ->collect();
+        });
+    }
+
     public function getBoardItem(int $boardId, int $itemId): Collection
     {
         return Cache::remember(__FUNCTION__.$boardId.$itemId, $this->ttl, function () use ($boardId, $itemId) {
-            return Http::github()->get(self::apiBase()."{$boardId}/items/{$itemId}")
+            return Http::github()->get(self::apiBase()."{$boardId}/items/{$itemId}", [
+                'fields' => $this->getCustomFields($boardId)->pluck('id')->implode(','),
+            ])
                 ->throw()
                 ->collect();
         });

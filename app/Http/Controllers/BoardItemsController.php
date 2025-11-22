@@ -36,7 +36,8 @@ class BoardItemsController extends Controller
     {
         $item = $this->github->getBoardItem($boardId, $itemId);
 
-        return view('board-item', compact('item', 'boardId'));
+        $customFields = ['Status', 'Type', 'Repository', 'Assignees', 'Title', 'Iteration', 'Size', 'Priority', 'Milestone', 'Parent Issue', 'Labels'];
+        return view('board-item', compact('item', 'boardId', 'customFields'));
     }
 
     /**

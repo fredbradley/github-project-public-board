@@ -25,6 +25,25 @@ function getBoardsForNavigation(): \Illuminate\Support\Collection
     return $api->getBoardsForNavigation();
 }
 
+function getCustomField(array $fields, string $name): null|string|array
+{
+    $data = collect($fields)->where('name', $name)->first();
+    if (is_null($data)) {
+        return null;
+    }
+    $result = match ($name) {
+        'Assignees', 'Parent Issue', 'Labels' => $data['value'] ?? null,
+        'Milestone' => $data['value']['title'] ?? null,
+        'Size', 'Priority', 'Status' => $data['value']['name']['raw'] ?? null,
+        'Iteration' => $data['value']['title']['raw'] ?? null,
+        'Title' => $data['value']['raw'] ?? null,
+        'Repository' => $data['value']['full_name'] ?? null,
+        'Type' => $data['value']['name'] ?? null,
+        default => throw new UnhandledMatchError($name.' not found in match statement')
+    };
+    return $result;
+}
+
 /**
  * Suggests a readable text color for a given background hex color.
  * Returns a hex code string that meets WCAG contrast guidelines.

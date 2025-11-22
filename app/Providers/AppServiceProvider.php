@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
         Http::macro('githubGraphQL', function (string $query, array $variables) {
             return Http::withHeaders([
                 'Accept' => 'application/vnd.github+json',
-                'Authorization' => 'Bearer ' . env('GITHUB_TOKEN')
+                'Authorization' => 'Bearer '.env('GITHUB_TOKEN'),
             ])->post('https://api.github.com/graphql', [
                 'query' => $query,
                 'variables' => $variables,

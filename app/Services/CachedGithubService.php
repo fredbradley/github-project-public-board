@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Data\BoardItemData;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -93,6 +94,45 @@ class CachedGithubService
                 ->throw()
                 ->collect();
         });
+    }
+
+    public function postComment(string $url, string $comment): Response
+    {
+        $username = auth()->user()?->name ?? 'Unknown User';
+
+        $comment = sprintf('<b>%s comments:</b><br /><br />%s', $username, $comment);
+
+        return Http::github()->post($url, [
+            'body' => $comment,
+        ])->throw();
+    }
+
+    public function getUnCachedFromUrl(string $url): Collection
+    {
+        return Http::github()->get($url)->throw()->collect();
+    }
+
+    public function getApiResponseFromUrl(string $url): Collection
+    {
+        return Cache::remember(
+            __FUNCTION__.$url,
+            $this->ttl,
+            function () use ($url) {
+                return $this->getUnCachedFromUrl($url);
+            });
+    }
+
+    public function getIssueComments(string $owner, string $repo, int $number): Collection
+    {
+        return Cache::remember(
+            __FUNCTION__.$owner.'/'.$repo.'/'.$number,
+            $this->ttl,
+            function () use ($owner, $repo, $number) {
+                return Http::github()
+                    ->get("repos/{$owner}/{$repo}/issues/{$number}/comments")
+                    ->throw()
+                    ->collect();
+            });
     }
 
     public function getBoardItem(int $boardId, int $itemId): Collection

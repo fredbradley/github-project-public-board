@@ -37,7 +37,7 @@ function getCustomField(array $fields, string $name): null|string|array
         'Size', 'Priority', 'Status' => $data['value']['name']['raw'] ?? null,
         'Iteration' => $data['value']['title']['raw'] ?? null,
         'Title' => $data['value']['raw'] ?? null,
-        'Repository' => $data['value']['full_name'] ?? null,
+        'Repository' => $data['value'] ?? null,
         'Type' => $data['value']['name'] ?? null,
         default => throw new UnhandledMatchError($name.' not found in match statement')
     };

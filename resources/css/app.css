@@ -70,3 +70,6 @@ select:focus[data-flux-control] {
 @plugin "daisyui" {
     themes: light --default, dark --prefersdark;
 }
+p>a {
+    @apply text-blue-700 hover:underline;
+}

@@ -12,8 +12,10 @@
     <x-data-list :title="$title">
 
         @switch($field)
-
-            {{-- LABELS --}}
+            @case('Repository')
+                <a href="{{ $value['html_url'] }}" target="_blank">{{ $value['full_name'] }}</a>
+                @break;
+                {{-- LABELS --}}
             @case('Labels')
                 @if (is_array($value))
                     <div class="flex flex-wrap gap-1">
@@ -46,6 +48,18 @@
                 @endif
                 @break
 
+            @case('Type')
+                @if ($value==='Bug')
+                    🪲
+                @endif
+                @if($value==='Feature')
+                    🤩
+                @endif
+                @if($value==='Task')
+                    📋
+                @endif
+                {{ $value }}
+                @break
                 {{-- DEFAULT (simple string or number) --}}
             @default
                 {{ is_array($value) ? json_encode($value) : $value }}
